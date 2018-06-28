@@ -1,15 +1,25 @@
 import { combineReducers,createStore } from 'redux';
 
 const userReducer = (state = {},action) => {
+    switch(action.type ){
+        case "CHANGE_NAME" : {
+            state ={...state, name : action.payload}
+            break;
+        }
+        case "CHANGE_AGE" :{
+            state ={...state, age :action.payload}
+            break;
+        }
+    }
     return state;
 }
-const tweetReducer = (state = {},action) => {
+const tweetReducer = (state = [],action) => {
     return state;
 }
 
 const reducers = combineReducers({
     user:userReducer,
-    tweets:tweetReducer
+    tweets:tweetReducer,
 })
 
 const store = createStore(reducers);
@@ -17,5 +27,5 @@ store.subscribe(()=>{
     console.log('store change',store.getState())
 })
 
-store.dispatch({type:"NYC" ,payload:2})//'payload' can change name but 'type'
-store.dispatch({type:"NY" ,payload:1})
+store.dispatch({type:"CHANGE_NAME" ,payload:"God"})//'payload' can change name but 'type'
+store.dispatch({type:"CHANGE_AGE" ,payload:35})
