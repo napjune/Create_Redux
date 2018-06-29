@@ -1,14 +1,19 @@
-import { combineReducers,createStore } from 'redux';
+import { combineReducers,createStore,applyMiddleware } from 'redux';
 
 const userReducer = (state = {},action) => {
-    switch(action.type ){
+    switch(action.type){
         case "CHANGE_NAME" : {
-            state ={...state, name : action.payload}
+            var  v = state
+            state = {...state ,name:action.payload,title:action.title}
+            console.log('state is : ',v)
             break;
         }
         case "CHANGE_AGE" :{
-            state ={...state, age :action.payload}
+            state = {...state,age:action.payload}
             break;
+        }
+        case "E" : {
+            throw new Error("erorrr!!")
         }
     }
     return state;
@@ -22,10 +27,25 @@ const reducers = combineReducers({
     tweets:tweetReducer,
 })
 
-const store = createStore(reducers);
+const mylogger =(store)=>(next)=>(action)=>{
+    console.log("Log Action : ",action);
+    next(action);
+}
+const error =(store)=>(next)=>(action)=>{
+    try{
+    next(action);
+    }catch(e){
+        console.log("AHHH",e)
+    }
+}
+
+const store = createStore(reducers,{},applyMiddleware(mylogger,error));//later  move {} to reducer
 store.subscribe(()=>{
     console.log('store change',store.getState())
 })
 
-store.dispatch({type:"CHANGE_NAME" ,payload:"God"})//'payload' can change name but 'type'
+store.dispatch({type:"CHANGE_NAME" ,payload:"God",title:"cruel"})
+store.dispatch({type:"CHANGE_NAME" })
+store.dispatch({type:"CHANGE_NAME" ,payload:"nap",title:"cute"})//'payload' can change name but 'type'
 store.dispatch({type:"CHANGE_AGE" ,payload:35})
+store.dispatch({type:"E" })
